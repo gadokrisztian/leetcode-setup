@@ -1,33 +1,60 @@
+#include <algorithm>
+#include <cstddef>
 #include <iostream>
 
-#include <fmt/ranges.h>
-#include <fmt/core.h>
-#include <vector>
 #include <fmt/chrono.h>
-
-#pragma GCC optimize("O3", "inline", "fast-math", "tree-vectorize")
-//#pragma GCC target("arch=native")
+#include <fmt/core.h>
+#include <fmt/ranges.h>
+#include <stack>
+#include <vector>
 
 using namespace std;
 
+#pragma GCC optimize("O3", "inline", "fast-math", "tree-vectorize")
+// #pragma GCC target("arch=native")
+
+
 // Boost i/o.
 auto init = []() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    cout.tie(nullptr);
-    return 'c';
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  cout.tie(nullptr);
+  return 'c';
 }();
 
+class Solution {
+public:
+  int largestRectangleArea(vector<int> &heights) {
+    if(heights.size() == 1) {
+      return heights[0];
+    }
+    pair<int, int> result = _aux(heights, 0);
+    return result.first * result.second;
+  }
+
+  pair<int, int> _aux(vector<int> &heights, int i) {
+    if (heights.size() - i == 1) {
+      return {1, heights[0]};
+    } else {
+      pair<int, int> left = _aux(heights, i + 1);
+      if ((left.first + 1) * heights[i] >= left.first * left.second) {
+        return {left.first, heights[i]};
+      } else {
+        return left;
+      }
+    }
+  }
+};
+
 int main() {
-    int n = 54;
-    fmt::println("dawdaw {} dad awd", n);
+  Solution sol;
 
-    vector<int> alma = {1, 2, 3, 4, 5};
-    fmt::println("alma: {}", alma);
+  vector<int> heights = {2, 1, 5, 6, 2, 3};
+  // vector<int> heights = {2, 4};
+  // vector<int> heights = {4, 2};
 
-    auto now = std::chrono::system_clock::now();
-    fmt::print("Date and time: {}\n", now);
-    fmt::print("Time: {:%H:%M}\n", now);
+  auto result = sol.largestRectangleArea(heights);
+  fmt::println("{}", result);
 
-    return 0;
+  return 0;
 }
